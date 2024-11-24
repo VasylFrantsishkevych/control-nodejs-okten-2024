@@ -13,14 +13,29 @@ const carSchema = new Schema({
    description: {type: String, required: true},
    location: { type: String, enum: UkraineLocationEnum, required: true },
    views: {type: Number, default: 0},
-   viewsByDay: [{ date: Date, count: Number }],
+   // viewsByDay: [{ date: Date, count: Number }],
    isActive: {type: String, enum: CarActiveEnum, default: CarActiveEnum.EXPECTATION},
-   seller: { type: Schema.Types.ObjectId, ref: 'users', required: true },
+   seller: { type: Schema.Types.ObjectId, ref: 'users', required: false },
 },
    {
       timestamps: true,
       versionKey: false,
    }
 )
+
+function restrictRoleUpdate(next: Function) {
+   const update = this.getUpdate();
+ 
+   if (update.$set?.isActive) {
+     delete update.$set.isActive;
+   }
+   if (update.isActive) {
+     delete update.isActive;
+   }
+ 
+   next();
+ }
+
+ carSchema.pre('findOneAndUpdate', restrictRoleUpdate);
 
 export const Car = model<ICar>("cars", carSchema);

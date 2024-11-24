@@ -8,7 +8,7 @@ const userSchema = new Schema({
    email: {type: String, required: true, unique: true},
    password: {type: String, required: true, select: false},
    phone: {type: String, required: true},
-   role: {type: String, enum: RoleEnum},
+   role: {type: String, enum: RoleEnum, immutable: true},
    typeAccount: {type: String, enum: TypeAccountEnum, default: TypeAccountEnum.BASIC},
    block: {type: Boolean, default: false},
    isDeleted: {type: Boolean, default: false},

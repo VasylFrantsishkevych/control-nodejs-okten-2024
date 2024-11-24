@@ -12,9 +12,21 @@ export interface ICar {
    description: string,
    location: UkraineLocationEnum,
    views: number,
-   viewsByDay: { date: Date, count: number }[];
+   // viewsByDay: { date: Date, count: number }[];
    isActive: CarActiveEnum,
-   seller: mongoose.Types.ObjectId
+   seller?: mongoose.Types.ObjectId
    createdAt?: Date;
    updatedAt?: Date;
 }
+
+export type ICarUpdate = Pick<
+   ICar, 
+   'brand' | 
+   'model' | 
+   'photo' | 
+   'year' | 
+   'price' | 
+   'currency' | 
+   'description' |
+   'location'
+>;
