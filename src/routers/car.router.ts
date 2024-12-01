@@ -2,12 +2,13 @@ import { Router } from "express";
 
 import { carController } from "../controllers";
 import { authMiddleware, carMiddleware, commonMiddleware, userMiddleware } from "../middlewares";
-import { CarValidator } from "../validators";
+import { CarValidator, UserValidator } from "../validators";
 import { RoleEnum } from "../enums";
 
 const router = Router();
 
 router.get('/', 
+   commonMiddleware.isQueryValid(UserValidator.listQuery),
    authMiddleware.checkAccessToken,
    userMiddleware.checkIsAllowRoles([RoleEnum.BUYER]),
    carController.getAll

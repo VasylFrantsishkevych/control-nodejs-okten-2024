@@ -1,18 +1,28 @@
-import { ICar, ICarUpdate, IDetailCarInfo } from "../interfaces";
-import { carRepository } from "../repositories";
+import { ICar, ICarDetails, ICarListQuery, ICarListResponse, ICarUpdate, IDetailCarInfo, IDetailCarInfoResponse, ITokenPayload } from "../interfaces";
+import { carPresenter } from "../presenter/car.presenter";
+import { carRepository, userRepository } from "../repositories";
 
 class CarService {
-   public async getAll(): Promise<ICar[]> {
-      return await carRepository.getAll();
-   }
-
-   public async getById(carId: string): Promise<ICar> {
-      const car = await this.incViewsHistory(carId);
-   
+   public async create(dto: ICar, jwtPayload: ITokenPayload): Promise<ICar> {
+      const {userId} = jwtPayload;
+      const car = await carRepository.create({...dto, sellerId: userId});
+      
+      await userRepository.updateCarsForUser(userId, car)
+      
       return car;
    }
+   public async getAll(query: ICarListQuery): Promise<ICarListResponse> {
+      const [cars, total] = await carRepository.getAll(query);
+      return carPresenter.toListResDto(cars, total, query);
+   }
 
-   public async getByIdDetailInfo(carId: string): Promise<IDetailCarInfo> {
+   public async getById(carId: string): Promise<ICarDetails> {
+      const car = await this.incViewsHistory(carId);
+   
+      return carPresenter.toCarDetailsResDto(car);
+   }
+
+   public async getByIdDetailInfo(carId: string): Promise<IDetailCarInfoResponse> {
       const car = await carRepository.findById(carId);
       
       const averagePrice = await carRepository.getAveragePrice(car.brand, car.location);
@@ -24,11 +34,7 @@ class CarService {
          averagePrice,
       }
 
-      return detailCarInfo;
-   }
-
-   public async create(dto: ICar): Promise<ICar> {
-      return await carRepository.create(dto);
+      return carPresenter.toCarInfoResDto(detailCarInfo);
    }
 
    public async updateById(carId: string, dto: ICarUpdate): Promise<ICar> {

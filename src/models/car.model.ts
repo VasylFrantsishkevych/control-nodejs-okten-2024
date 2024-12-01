@@ -25,7 +25,7 @@ const carSchema = new Schema({
       },
    },   
    isActive: {type: String, enum: CarActiveEnum, default: CarActiveEnum.EXPECTATION},
-   sellerId: { type: Schema.Types.ObjectId, ref: 'users' },
+   sellerId: { type: Schema.Types.ObjectId, ref: "users" },
 },
    {
       timestamps: true,

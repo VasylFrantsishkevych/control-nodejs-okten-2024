@@ -1,12 +1,13 @@
 import { CarActiveEnum, TypeAccountEnum } from "../enums";
-import { ICar, IUser, IUserDocument, IUserListQuery, IUserListResponse } from "../interfaces";
+import { ICarListQuery, ICarListResponse, IUser, IUserDocument, IUserListQuery, IUserListResponse } from "../interfaces";
 import { userPresenter } from "../presenter";
+import { carPresenter } from "../presenter/car.presenter";
 import { carRepository, userRepository } from "../repositories";
 
 class ManagerService {
-   public async getAllNotValidCar(): Promise<ICar[]> {
-      const notValidCars = await carRepository.getAll({isActive: CarActiveEnum.NOT_ACTIVE});
-      return notValidCars;
+   public async getAllNotValidCar(query: ICarListQuery): Promise<ICarListResponse> {
+      const [notValidCars, total] = await carRepository.getAll(query, {isActive: CarActiveEnum.NOT_ACTIVE});
+      return carPresenter.toListResDto(notValidCars, total, query);
    }
    public async givePremium(user: IUserDocument): Promise<IUser> {
       user.typeAccount = TypeAccountEnum.PREMIUM;

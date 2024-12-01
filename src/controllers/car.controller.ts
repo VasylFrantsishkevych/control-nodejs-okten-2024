@@ -1,13 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ICar, ICarUpdate } from "../interfaces";
+import { ICar, ICarUpdate, ITokenPayload, IUserListQuery } from "../interfaces";
 import { carService } from "../services";
 
 class CarController {
    public async create(req: Request, res: Response, next: NextFunction) {
       try {
         const dto = req.body as ICar; 
-        const result = await carService.create(dto);
+        const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+        const result = await carService.create(dto, jwtPayload);
         res.status(201).json(result);
       } catch (e) {
          next(e);
@@ -16,7 +17,8 @@ class CarController {
 
    public async getAll(req: Request, res: Response, next: NextFunction) {
       try {
-         const cars = await carService.getAll();
+         const query = req.query as IUserListQuery;
+         const cars = await carService.getAll(query);
          res.json(cars);
       } catch (e) {
          next(e)

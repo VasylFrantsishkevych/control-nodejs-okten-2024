@@ -7,6 +7,7 @@ import { UserValidator } from "../validators";
 const router = Router();
 
 router.get('/not-valid-cars',
+   commonMiddleware.isQueryValid(UserValidator.listQuery),
    authMiddleware.checkAccessToken,
    userMiddleware.checkIsAllowRoles([RoleEnum.MANAGER]),
    managerController.getAllNotValidCar

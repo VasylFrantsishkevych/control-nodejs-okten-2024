@@ -6,7 +6,8 @@ import { IUserListQuery } from "../interfaces";
 class ManagerController {
    public async getAllNotValidCar(req: Request, res: Response, next: NextFunction) {
       try {
-         const user = await managerService.getAllNotValidCar();
+         const query = req.query as IUserListQuery;
+         const user = await managerService.getAllNotValidCar(query);
          res.json(user);
       } catch (e) {
          next(e)

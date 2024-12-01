@@ -1,5 +1,7 @@
-import mongoose, {Document} from "mongoose";
+import {HydratedDocument} from "mongoose";
+
 import { RoleEnum, TypeAccountEnum } from "../enums";
+import { ICar } from "./car.interface";
 
 export interface IUser {
    _id?: string,
@@ -8,9 +10,9 @@ export interface IUser {
    password: string,
    phone: string,
    role: RoleEnum,
-   typeAccount: TypeAccountEnum;
+   typeAccount: TypeAccountEnum,
    block?: boolean,
-   cars?: [mongoose.Schema.Types.ObjectId],
+   cars?: string | ICar[],
    createdAt?: Date,
    updatedAt?: Date,
 }
@@ -36,6 +38,6 @@ export type IUserResponse = Pick<
   | "block"
 >;
 
-export type IUserDocument = IUser & Document;
+export type IUserDocument = HydratedDocument<IUser>;
 
 export type ISignIn = Pick<IUser, 'email' | 'password'>;

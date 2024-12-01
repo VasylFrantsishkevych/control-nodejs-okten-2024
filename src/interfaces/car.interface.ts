@@ -1,7 +1,7 @@
-import mongoose, {Document} from "mongoose";
+import { HydratedDocument} from "mongoose";
 import { CarActiveEnum, CurrencyEnum, UkraineLocationEnum } from "../enums";
 
-export type ICar = {
+export interface ICar  {
    _id?: string,
    brand: string,
    model: string,
@@ -14,10 +14,44 @@ export type ICar = {
    views: number,
    viewsHistory: [{ date: Date, count: number }];
    isActive: CarActiveEnum,
-   seller: mongoose.Schema.Types.ObjectId;
+   sellerId: string;
    createdAt?: Date;
    updatedAt?: Date;
-} & Document
+}
+
+export type ICarResponse = Pick<
+   ICar,
+   'brand' | 
+   'model' | 
+   'photo' | 
+   'year' | 
+   'price' | 
+   'currency' | 
+   'location' |
+   'isActive' 
+>;
+export type ICarDetails = Pick<
+   ICar,
+   'brand' | 
+   'model' | 
+   'photo' | 
+   'year' | 
+   'price' | 
+   'currency' | 
+   'location' |
+   'isActive' |
+   'views' |
+   'description' |
+   'sellerId'
+>;
+
+export type ICarDocument = HydratedDocument<ICar>;
+
+export interface IDetailCarInfoResponse {
+   car: ICarDetails
+   viewsDetails: ICarViewsDetails,
+   averagePrice: ICarAveragePrice,
+}
 
 export type IViewsHistoryCar = Pick<ICar, 'viewsHistory'>;
 
@@ -49,3 +83,13 @@ export interface IDetailCarInfo {
    viewsDetails: ICarViewsDetails,
    averagePrice: ICarAveragePrice,
 }
+
+export interface ICarListQuery {
+   limit?: number,
+   page?: number,
+}
+
+export interface ICarListResponse {
+   data: ICarResponse[];
+   total: number;
+ }

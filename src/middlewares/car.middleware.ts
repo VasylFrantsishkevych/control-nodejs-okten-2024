@@ -25,7 +25,6 @@ class CarMiddleware {
 
    public checkBadWords (req: Request, res: Response, next: NextFunction) {
       try {
-         let attempts: number = 0;
          let { description } = req.body as ICar;
 
          if (!description) {
@@ -35,17 +34,23 @@ class CarMiddleware {
           const words = description.toLowerCase().split(' ')
           const containsBadWords = badWords.some((word) => words.includes(word));
 
-          if (containsBadWords) {
-            attempts++
-            console.log(attempts)
-            if (attempts > 1) {
-               req.body.isActive = CarActiveEnum.NOT_ACTIVE;
-               return next();
-             }
-            throw new ApiError('Description contains prohibited words', 400);
+          if (!req.session.attempts) {
+            req.session.attempts = 0;
           }
 
-          attempts = 0
+          if (containsBadWords) {
+            req.session.attempts += 1;
+            if (req.session.attempts >= 3) {
+               req.body.isActive = CarActiveEnum.NOT_ACTIVE;
+               req.session.attempts = 0
+
+               
+               return next()
+             }
+            throw new ApiError(`Description contains prohibited words. You hane ${3 - req.session.attempts} attemts` , 400);
+          }
+
+          req.session.attempts = 0
           req.body.isActive = CarActiveEnum.ACTIVE;
 
           next()

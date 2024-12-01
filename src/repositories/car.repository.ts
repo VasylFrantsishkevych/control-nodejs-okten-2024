@@ -1,16 +1,20 @@
 import mongoose from "mongoose";
 import dayjs from "dayjs";
 
-import { ICar, ICarAveragePrice, ICarUpdate, ICarViewsDetails } from "../interfaces";
+import { ICar, ICarAveragePrice, ICarDocument, ICarListQuery, ICarUpdate, ICarViewsDetails } from "../interfaces";
 import { Car } from "../models";
 import { timeHelper } from "../helpers";
 
 class CarRepository {
-   public async getAll(filter = {}): Promise<ICar[]> {
-      return await Car.find(filter).select('-viewsHistory');
+   public async getAll(query: ICarListQuery, filter = {}): Promise<[ICar[], number]> {
+      const skip = query.limit * (query.page - 1);
+      return await Promise.all([
+         Car.find(filter).limit(query.limit).skip(skip),
+         Car.countDocuments(filter),
+      ]);
    }
 
-   public async findById(carId: string): Promise<ICar | null> {
+   public async findById(carId: string): Promise<ICarDocument | null> {
       return await Car.findById(carId);
    }
 
@@ -69,7 +73,7 @@ class CarRepository {
            },
          },
       ])
-      console.log(viewsData)
+      
       const lastDayViews = viewsData[0].lastDay[0]?.total || 0;
       const lastWeekViews = viewsData[0].lastWeek[0]?.total || 0;
       const lastMonthViews = viewsData[0].lastMonth[0]?.total || 0;

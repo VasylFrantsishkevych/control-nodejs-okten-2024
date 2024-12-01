@@ -1,18 +1,33 @@
 import express, {NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
+import session from "express-session";
 
 import { configs } from "./configs/configs";
 import { ApiError } from "./errors";
 import { adminRouter, authRouter, carRouter, managerRouter, userRouter } from "./routers";
 import { userRepository } from "./repositories";
 import { adminService } from "./services/admin.service";
-import { RoleEnum, TypeAccountEnum } from "./enums";
-import { IUser } from "./interfaces";
+import { admin } from "./constants";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+
+declare module 'express-session' {
+   export interface SessionData {
+      attempts: number;
+   }
+ }
+
+app.use(
+   session({
+     secret: "car-secret-key",
+     resave: false,
+     saveUninitialized: true,
+     cookie: { maxAge: 1200000 }, // Термін дії сесії (наприклад, 1 хвилина)
+   })
+ );
 
 app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
@@ -32,16 +47,7 @@ process.on('uncaughtException', (error) => {
 const createAdmin = async () => {
    try {
       const adminIsExist = await userRepository.getByRole('admin');
-      if (!adminIsExist) {
-         const admin: IUser = {
-            userName: 'admin',
-            email: 'admin@gmail.com',
-            password: 'admin',
-            phone: '380502123215',
-            role: RoleEnum.ADMIN,
-            typeAccount: TypeAccountEnum.PREMIUM,
-          };
-          
+      if (!adminIsExist) {          
          await adminService.createAdmin(admin);
          console.log('Admin creating succesful');
       } else {

@@ -1,4 +1,4 @@
-import { IUser, IUserDocument, IUserListQuery } from "../interfaces";
+import { ICar, IUser, IUserDocument, IUserListQuery } from "../interfaces";
 import { User } from "../models";
 
 class UserRepository {
@@ -6,7 +6,7 @@ class UserRepository {
       const skip = query.limit * (query.page - 1);
       return await Promise.all([
          User.find(filter).limit(query.limit).skip(skip),
-         User.countDocuments(),
+         User.countDocuments(filter),
       ]);
    }
 
@@ -23,7 +23,7 @@ class UserRepository {
    }
 
    public async getMe(userId: string): Promise<IUser | null> {
-      return await User.findOne({_id: userId}).populate('cars').exec();
+      return await User.findOne({_id: userId}).populate('cars', 'brand');
    }
 
    public async getByRole(role: string): Promise<IUser | null> {
@@ -32,6 +32,12 @@ class UserRepository {
 
    public async updateById(userId: string, dto: Partial<IUser>): Promise<IUser> {
       return await User.findByIdAndUpdate(userId, dto, {new: true});
+   }
+
+   public async updateCarsForUser(userId: string, car: ICar): Promise<IUser> {
+      return await User.findByIdAndUpdate(userId, {
+         $push: { cars: car._id }
+      });
    }
 
    public async delete(userId: string): Promise<void> {
