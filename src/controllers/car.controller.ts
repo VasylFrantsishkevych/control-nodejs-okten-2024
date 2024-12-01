@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
+import { UploadedFile } from "express-fileupload";
 
 import { ICar, ICarUpdate, ITokenPayload, IUserListQuery } from "../interfaces";
 import { carService } from "../services";
-import { UploadedFile } from "express-fileupload";
 
 class CarController {
    public async create(req: Request, res: Response, next: NextFunction) {
@@ -67,6 +67,17 @@ class CarController {
          next(e);
       }
    }
+   public async deletePhoto(req: Request, res: Response, next: NextFunction) {
+      try {
+         const carId = req.params.carId
+  
+        const car = await carService.deletePhoto(carId);
+        
+        res.status(201).json(car);
+      } catch (e) {
+        next(e);
+      }
+    }
 
    public async deleteById(req: Request, res: Response, next: NextFunction) {
       try {

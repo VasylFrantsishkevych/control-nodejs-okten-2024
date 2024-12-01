@@ -1,5 +1,6 @@
 import { UploadedFile } from "express-fileupload";
-import { ICar, ICarDetails, ICarListQuery, ICarListResponse, ICarUpdate, IDetailCarInfo, IDetailCarInfoResponse, ITokenPayload } from "../interfaces";
+
+import { ICar, ICarDetails, ICarListQuery, ICarListResponse, ICarResponse, ICarUpdate, IDetailCarInfo, IDetailCarInfoResponse, ITokenPayload } from "../interfaces";
 import { carPresenter } from "../presenter/car.presenter";
 import { carRepository, userRepository } from "../repositories";
 import { s3Service } from "./s3.servise";
@@ -40,11 +41,12 @@ class CarService {
       return carPresenter.toCarInfoResDto(detailCarInfo);
    }
 
-   public async updateById(carId: string, dto: ICarUpdate): Promise<ICar> {
-      return await carRepository.updateById(carId, dto);
+   public async updateById(carId: string, dto: ICarUpdate): Promise<ICarResponse> {
+      const updateCar = await carRepository.updateById(carId, dto);
+      return carPresenter.toPublicResDto(updateCar)
    }
 
-   public async uploadPhoto(carId:string, carPhoto: UploadedFile): Promise<ICar> {
+   public async uploadPhoto(carId:string, carPhoto: UploadedFile): Promise<ICarResponse> {
       const car = await carRepository.getOneById(carId);
 
       const photo = await s3Service.uploadFile(carPhoto, FileItemTypeEnum.CAR, carId);
@@ -53,8 +55,19 @@ class CarService {
       if (car.photo) {
          await s3Service.deleteFile(car.photo)
       }
-      return updatedCar;
+      return carPresenter.toPublicResDto(updatedCar);
    }
+
+   public async deletePhoto(carId:string): Promise<ICarResponse> {
+      const car = await carRepository.getOneById(carId);
+  
+      if (car.photo) {
+        await s3Service.deleteFile(car.photo);
+      }
+
+      const updatedCar = await carRepository.updateById(carId, { photo: null });
+      return carPresenter.toPublicResDto(updatedCar)
+    }
 
    public async deleteById(carId: string): Promise<void> {
       await carRepository.deleteById(carId);
@@ -76,14 +89,11 @@ class CarService {
        });
 
        if (todayViewRecord) {
-         // Якщо запис за сьогодні існує, збільшуємо кількість переглядів
          todayViewRecord.count += 1;
        } else {
-         // Якщо запису немає, додаємо новий запис на сьогоднішній день
          car.viewsHistory.push({ date: today, count: 1 });
        }
    
-       // Зберігаємо оновлену інформацію про автомобіль
        return await car.save();
    }
 }

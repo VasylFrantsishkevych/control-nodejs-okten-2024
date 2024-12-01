@@ -1,9 +1,10 @@
 import { Router } from "express";
 
 import { carController } from "../controllers";
-import { authMiddleware, carMiddleware, commonMiddleware, userMiddleware } from "../middlewares";
+import { authMiddleware, carMiddleware, commonMiddleware, fileMiddleware, userMiddleware } from "../middlewares";
 import { CarValidator, UserValidator } from "../validators";
 import { RoleEnum } from "../enums";
+import { avatarConfig } from "../constants";
 
 const router = Router();
 
@@ -44,11 +45,16 @@ router.delete('/:carId',
    carMiddleware.checkIsCarExist,
    carController.deleteById,
 );
-router.post('/upload-photo/:carId',
+router.post('/photo/:carId',
    authMiddleware.checkAccessToken,
    userMiddleware.checkIsAllowRoles([RoleEnum.SELLER]),
-   // fileMiddleware.isFileValid(),
+   fileMiddleware.isFileValid("image", avatarConfig),
    carController.uploadPhoto
+)
+router.delete('/photo/:carId',
+   authMiddleware.checkAccessToken,
+   userMiddleware.checkIsAllowRoles([RoleEnum.SELLER]),
+   carController.deletePhoto
 )
 router.get('/detail-info/:carId',
    commonMiddleware.checkIsIdvalid('carId'),
