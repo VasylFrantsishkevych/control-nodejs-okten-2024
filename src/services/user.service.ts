@@ -1,10 +1,10 @@
 import { ApiError } from "../errors";
-import {  ITokenPayload, IUser, IUserListQuery } from "../interfaces";
+import {  ITokenPayload, IUser, IUserListQuery, IUserListResponse } from "../interfaces";
 import { userPresenter } from "../presenter";
 import { userRepository } from "../repositories/user.repository";
 
 class UserService {
-   public async getAll(query: IUserListQuery): Promise<any> {
+   public async getAll(query: IUserListQuery): Promise<IUserListResponse> {
       const [users, total] = await userRepository.getAll(query);
       return userPresenter.toListResDto(users, total, query)
    }

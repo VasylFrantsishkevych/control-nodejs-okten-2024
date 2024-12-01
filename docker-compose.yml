@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+     - "8888:5500"
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    restart: on-failure
+    command: >
+      sh -c "npm run start:dev"
+
+  db:
+    image: mongo
+    ports:
+     - "5555:27017"
+    env_file:
+      - .env
+    volumes:
+      - ./mongo_db:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    restart: on-failure
