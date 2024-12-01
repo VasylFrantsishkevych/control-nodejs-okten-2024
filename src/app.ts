@@ -1,6 +1,7 @@
 import express, {NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import session from "express-session";
+import fileUpload from "express-fileupload";
 
 import { configs } from "./configs/configs";
 import { ApiError } from "./errors";
@@ -13,6 +14,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(fileUpload());
 
 declare module 'express-session' {
    export interface SessionData {
@@ -25,7 +27,7 @@ app.use(
      secret: "car-secret-key",
      resave: false,
      saveUninitialized: true,
-     cookie: { maxAge: 1200000 }, // Термін дії сесії (наприклад, 1 хвилина)
+     cookie: { maxAge: 1200000 },
    })
  );
 

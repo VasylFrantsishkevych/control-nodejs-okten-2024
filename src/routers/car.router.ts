@@ -20,6 +20,7 @@ router.post('/',
    carMiddleware.checkBadWords,
    carController.create
 );
+
 router.get('/:carId',
    commonMiddleware.checkIsIdvalid('carId'),
    authMiddleware.checkAccessToken,
@@ -43,6 +44,12 @@ router.delete('/:carId',
    carMiddleware.checkIsCarExist,
    carController.deleteById,
 );
+router.post('/upload-photo/:carId',
+   authMiddleware.checkAccessToken,
+   userMiddleware.checkIsAllowRoles([RoleEnum.SELLER]),
+   // fileMiddleware.isFileValid(),
+   carController.uploadPhoto
+)
 router.get('/detail-info/:carId',
    commonMiddleware.checkIsIdvalid('carId'),
    authMiddleware.checkAccessToken,

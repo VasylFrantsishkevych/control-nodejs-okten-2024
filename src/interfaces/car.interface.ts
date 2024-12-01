@@ -21,6 +21,7 @@ export interface ICar  {
 
 export type ICarResponse = Pick<
    ICar,
+   '_id' |
    'brand' | 
    'model' | 
    'photo' | 
@@ -32,6 +33,7 @@ export type ICarResponse = Pick<
 >;
 export type ICarDetails = Pick<
    ICar,
+   '_id' |
    'brand' | 
    'model' | 
    'photo' | 
@@ -55,17 +57,17 @@ export interface IDetailCarInfoResponse {
 
 export type IViewsHistoryCar = Pick<ICar, 'viewsHistory'>;
 
-export type ICarUpdate = Pick<
-   ICar, 
-   'brand' | 
-   'model' | 
-   'photo' | 
-   'year' | 
-   'price' | 
-   'currency' | 
-   'description' |
-   'location'
->;
+export interface ICarUpdate  {
+   _id?: string,
+   brand?: string,
+   model?: string,
+   photo?: string,
+   year?: number,
+   price?: number,
+   currency?: CurrencyEnum,
+   description?: string,
+   location?: UkraineLocationEnum,
+}
 
 export interface ICarAveragePrice {
    averagePriceUkraine: number,

@@ -1,6 +1,9 @@
+import { UploadedFile } from "express-fileupload";
 import { ICar, ICarDetails, ICarListQuery, ICarListResponse, ICarUpdate, IDetailCarInfo, IDetailCarInfoResponse, ITokenPayload } from "../interfaces";
 import { carPresenter } from "../presenter/car.presenter";
 import { carRepository, userRepository } from "../repositories";
+import { s3Service } from "./s3.servise";
+import { FileItemTypeEnum } from "../enums";
 
 class CarService {
    public async create(dto: ICar, jwtPayload: ITokenPayload): Promise<ICar> {
@@ -39,6 +42,18 @@ class CarService {
 
    public async updateById(carId: string, dto: ICarUpdate): Promise<ICar> {
       return await carRepository.updateById(carId, dto);
+   }
+
+   public async uploadPhoto(carId:string, carPhoto: UploadedFile): Promise<ICar> {
+      const car = await carRepository.getOneById(carId);
+
+      const photo = await s3Service.uploadFile(carPhoto, FileItemTypeEnum.CAR, carId);
+      const updatedCar = await carRepository.updateById(carId, {photo})
+
+      if (car.photo) {
+         await s3Service.deleteFile(car.photo)
+      }
+      return updatedCar;
    }
 
    public async deleteById(carId: string): Promise<void> {

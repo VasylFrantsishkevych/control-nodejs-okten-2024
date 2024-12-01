@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { ICar, ICarUpdate, ITokenPayload, IUserListQuery } from "../interfaces";
 import { carService } from "../services";
+import { UploadedFile } from "express-fileupload";
 
 class CarController {
    public async create(req: Request, res: Response, next: NextFunction) {
@@ -51,6 +52,17 @@ class CarController {
          const dto = req.body as ICarUpdate;
          const carUpdate = await carService.updateById(carId, dto);
          res.status(201).json(carUpdate);
+      } catch (e) {
+         next(e);
+      }
+   }
+   public async uploadPhoto(req: Request, res: Response, next: NextFunction) {
+      try {
+         const carId = req.params.carId
+         const carPhoto = req.files.image as UploadedFile;
+         const carWithPhoto = await carService.uploadPhoto(carId, carPhoto);
+
+         res.status(201).json(carWithPhoto)
       } catch (e) {
          next(e);
       }
