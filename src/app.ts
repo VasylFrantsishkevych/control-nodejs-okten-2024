@@ -3,12 +3,11 @@ import mongoose from "mongoose";
 
 import { configs } from "./configs/configs";
 import { ApiError } from "./errors";
-import { adminRouter, authRouter, userRouter } from "./routers";
+import { adminRouter, authRouter, carRouter, managerRouter, userRouter } from "./routers";
 import { userRepository } from "./repositories";
 import { adminService } from "./services/admin.service";
 import { RoleEnum, TypeAccountEnum } from "./enums";
 import { IUser } from "./interfaces";
-import { carRouter } from "./routers/car.router";
 
 const app = express();
 
@@ -17,6 +16,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
+app.use('/manager', managerRouter);
 app.use('/users', userRouter);
 app.use('/cars', carRouter);
 

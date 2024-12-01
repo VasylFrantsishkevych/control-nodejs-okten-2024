@@ -1,22 +1,23 @@
 import { NextFunction, Request, Response } from "express";
 import { userService } from "../services/user.service";
-import { IUser } from "../interfaces";
+import { ITokenPayload, IUser, IUserListQuery } from "../interfaces";
 
 class UserController {
    public async getAll(req: Request, res: Response, next: NextFunction) {
       try {
-         const users = await userService.getAll();
+         const query = req.query as IUserListQuery;
+         const users = await userService.getAll(query);
          res.json(users);
       } catch (e) {
          next(e)
       }
    }
 
-   public async getById(req: Request, res: Response, next: NextFunction) {
+   public async getMe(req: Request, res: Response, next: NextFunction) {
       try {
-         const userId = req.params.userId;
+         const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
 
-         const user = await userService.getById(userId);
+         const user = await userService.getMe(jwtPayload);
          res.json(user);
       } catch (e) {
          next(e)

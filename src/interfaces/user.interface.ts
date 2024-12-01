@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, {Document} from "mongoose";
 import { RoleEnum, TypeAccountEnum } from "../enums";
 
 export interface IUser {
@@ -10,10 +10,32 @@ export interface IUser {
    role: RoleEnum,
    typeAccount: TypeAccountEnum;
    block?: boolean,
-   cars?: mongoose.Types.ObjectId,
-   isDeleted?: boolean,
-   createdAt?: Date;
-   updatedAt?: Date;
+   cars?: [mongoose.Schema.Types.ObjectId],
+   createdAt?: Date,
+   updatedAt?: Date,
 }
+
+export interface IUserListQuery {
+   limit?: number,
+   page?: number,
+}
+
+export interface IUserListResponse {
+   data: IUserResponse[];
+   total: number;
+ }
+
+export type IUserResponse = Pick<
+  IUser,
+  | "_id"
+  | "userName"
+  | "email"
+  | "phone"
+  | "role"
+  | "typeAccount"
+  | "block"
+>;
+
+export type IUserDocument = IUser & Document;
 
 export type ISignIn = Pick<IUser, 'email' | 'password'>;

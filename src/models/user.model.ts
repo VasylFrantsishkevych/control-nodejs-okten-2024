@@ -12,7 +12,7 @@ const userSchema = new Schema({
    typeAccount: {type: String, enum: TypeAccountEnum, default: TypeAccountEnum.BASIC},
    block: {type: Boolean, default: false},
    isDeleted: {type: Boolean, default: false},
-   cars: {type: Schema.Types.ObjectId, ref: 'cars'}
+   cars: {type: [Schema.Types.ObjectId], ref: 'cars'}
 },
    {
       timestamps: true,

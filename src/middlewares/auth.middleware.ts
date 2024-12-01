@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../errors";
 import { tokenService } from "../services";
-import { RoleEnum, TokenTypeEnum } from "../enums";
+import { TokenTypeEnum } from "../enums";
 import { tokenRepository } from "../repositories";
 
 class AuthMiddleware {
@@ -47,19 +47,6 @@ class AuthMiddleware {
         next(e) 
       }
    } 
-
-   public checkIsBuyer(req: Request, res: Response, next: NextFunction) {
-      try {
-         const {role} = req.res.locals.jwtPayload;
-         if (role !== RoleEnum.BUYER) {
-            throw new ApiError('You must have buyer permissions', 404)
-         }
-         console.log(role)
-         next()
-      } catch (e) {
-         next(e)
-      }
-   }
 }
 
 export const authMiddleware = new AuthMiddleware();

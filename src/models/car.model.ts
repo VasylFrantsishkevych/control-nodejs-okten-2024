@@ -13,9 +13,19 @@ const carSchema = new Schema({
    description: {type: String, required: true},
    location: { type: String, enum: UkraineLocationEnum, required: true },
    views: {type: Number, default: 0},
-   // viewsByDay: [{ date: Date, count: Number }],
+   viewsHistory: {
+      type: [
+        {
+          date: { type: Date, required: true },
+          count: { type: Number, required: true },
+        },
+      ],
+      default: function () {
+        return [{ date: new Date(), count: 0 }];
+      },
+   },   
    isActive: {type: String, enum: CarActiveEnum, default: CarActiveEnum.EXPECTATION},
-   seller: { type: Schema.Types.ObjectId, ref: 'users', required: false },
+   sellerId: { type: Schema.Types.ObjectId, ref: 'users' },
 },
    {
       timestamps: true,

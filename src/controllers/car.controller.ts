@@ -25,9 +25,18 @@ class CarController {
 
    public async getById(req: Request, res: Response, next: NextFunction) {
       try {
-         const car = req.res.locals.car;
+         const carId = req.params.carId;
+         const car = await carService.getById(carId);
+         res.json(car);
+      } catch (e) {
+         next(e)
+      }
+   }
 
-         // const user = await carService.getById(carId);
+   public async getByIdDetailInfo(req: Request, res: Response, next: NextFunction) {
+      try {
+         const carId = req.params.carId;
+         const car = await carService.getByIdDetailInfo(carId);
          res.json(car);
       } catch (e) {
          next(e)

@@ -1,9 +1,13 @@
-import { IUser } from "../interfaces";
+import { IUser, IUserDocument, IUserListQuery } from "../interfaces";
 import { User } from "../models";
 
 class UserRepository {
-   public async getAll(): Promise<IUser[]> {
-      return await User.find({});
+   public async getAll(query: IUserListQuery, filter = {}): Promise<[IUser[], number]> {
+      const skip = query.limit * (query.page - 1);
+      return await Promise.all([
+         User.find(filter).limit(query.limit).skip(skip),
+         User.countDocuments(),
+      ]);
    }
 
    public async create(dto: IUser): Promise<IUser> {
@@ -14,8 +18,12 @@ class UserRepository {
       return await User.findOne({ email }).select('+password');
    }
 
-   public async getById(userId: string): Promise<IUser | null> {
+   public async getById(userId: string): Promise<IUserDocument | null> {
       return await User.findById(userId).select("+password");
+   }
+
+   public async getMe(userId: string): Promise<IUser | null> {
+      return await User.findOne({_id: userId}).populate('cars').exec();
    }
 
    public async getByRole(role: string): Promise<IUser | null> {

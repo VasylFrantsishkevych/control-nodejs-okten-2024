@@ -1,18 +1,23 @@
 import { ApiError } from "../errors";
-import {  IUser } from "../interfaces";
+import {  ITokenPayload, IUser, IUserListQuery } from "../interfaces";
+import { userPresenter } from "../presenter";
 import { userRepository } from "../repositories/user.repository";
 
 class UserService {
-   public async getAll(): Promise<IUser[]> {
-      return await userRepository.getAll();
+   public async getAll(query: IUserListQuery): Promise<any> {
+      const [users, total] = await userRepository.getAll(query);
+      return userPresenter.toListResDto(users, total, query)
    }
 
-   public async getById(userId: string): Promise<IUser> {
-      const user = await userRepository.getById(userId);
+   public async getMe(jwtPayload: ITokenPayload): Promise<IUser> {
+      const {userId} = jwtPayload;
+      const user = await userRepository.getMe(userId);
+
       if (!user) {
          throw new ApiError(`User with ID: ${userId} no exist!`, 404);
       }
 
+      // return userPresenter.toPublicResDto(user);
       return user;
    }
 

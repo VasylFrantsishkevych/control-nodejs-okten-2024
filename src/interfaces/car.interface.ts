@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, {Document} from "mongoose";
 import { CarActiveEnum, CurrencyEnum, UkraineLocationEnum } from "../enums";
 
-export interface ICar {
+export type ICar = {
    _id?: string,
    brand: string,
    model: string,
@@ -12,12 +12,14 @@ export interface ICar {
    description: string,
    location: UkraineLocationEnum,
    views: number,
-   // viewsByDay: { date: Date, count: number }[];
+   viewsHistory: [{ date: Date, count: number }];
    isActive: CarActiveEnum,
-   seller?: mongoose.Types.ObjectId
+   seller: mongoose.Schema.Types.ObjectId;
    createdAt?: Date;
    updatedAt?: Date;
-}
+} & Document
+
+export type IViewsHistoryCar = Pick<ICar, 'viewsHistory'>;
 
 export type ICarUpdate = Pick<
    ICar, 
@@ -30,3 +32,20 @@ export type ICarUpdate = Pick<
    'description' |
    'location'
 >;
+
+export interface ICarAveragePrice {
+   averagePriceUkraine: number,
+   averagePriceRegion: number,
+}
+
+export interface ICarViewsDetails {
+   lastDayViews: string;
+   lastWeekViews: string;
+   lastMonthViews: string;
+}
+
+export interface IDetailCarInfo {
+   car: ICar,
+   viewsDetails: ICarViewsDetails,
+   averagePrice: ICarAveragePrice,
+}
