@@ -5,10 +5,16 @@ import { carPresenter } from "../presenter/car.presenter";
 import { carRepository, userRepository } from "../repositories";
 import { s3Service } from "./s3.servise";
 import { FileItemTypeEnum } from "../enums";
+import { userService } from "./user.service";
+import { ApiError } from "../errors";
 
 class CarService {
    public async create(dto: ICar, jwtPayload: ITokenPayload): Promise<ICar> {
       const {userId} = jwtPayload;
+      const user = await userService.getMe(jwtPayload);
+      if (user.typeAccount === 'basic' && user.cars.length >= 1) {
+         throw new ApiError('You cannot add more than one car. Buy premium', 403)
+      }
       const car = await carRepository.create({...dto, sellerId: userId});
       
       await userRepository.updateCarsForUser(userId, car)
