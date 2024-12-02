@@ -38,6 +38,18 @@ export type IUserResponse = Pick<
   | "block"
 >;
 
+export type IUserMeResponse = Pick<
+IUser,
+   | "_id"
+   | "userName"
+   | "email"
+   | "phone"
+   | "role"
+   | "typeAccount"
+   | "block"
+   | "cars"
+>
+
 export type IUserDocument = HydratedDocument<IUser>;
 
 export type ISignIn = Pick<IUser, 'email' | 'password'>;

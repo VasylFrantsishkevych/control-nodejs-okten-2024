@@ -17,5 +17,14 @@ router.get('/me',
    authMiddleware.checkAccessToken,
    userController.getMe
 )
+router.put('/me', 
+      authMiddleware.checkAccessToken,
+      commonMiddleware.checkIsBodyValid(UserValidator.update), 
+      userController.updateMe
+);
+router.delete('/me', 
+      authMiddleware.checkAccessToken,
+      userController.deleteMe
+);
 
 export const userRouter = router;

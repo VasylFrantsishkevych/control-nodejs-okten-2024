@@ -1,5 +1,5 @@
 import { ApiError } from "../errors";
-import {  ITokenPayload, IUser, IUserListQuery, IUserListResponse } from "../interfaces";
+import {  ITokenPayload, IUser, IUserListQuery, IUserListResponse, IUserMeResponse } from "../interfaces";
 import { userPresenter } from "../presenter";
 import { userRepository } from "../repositories/user.repository";
 
@@ -9,7 +9,7 @@ class UserService {
       return userPresenter.toListResDto(users, total, query)
    }
 
-   public async getMe(jwtPayload: ITokenPayload): Promise<IUser> {
+   public async getMe(jwtPayload: ITokenPayload): Promise<IUserMeResponse> {
       const {userId} = jwtPayload;
       const user = await userRepository.getMe(userId);
 
@@ -17,12 +17,17 @@ class UserService {
          throw new ApiError(`User with ID: ${userId} no exist!`, 404);
       }
 
-      // return userPresenter.toPublicResDto(user);
-      return user;
+      return userPresenter.toMeResDto(user);
    }
 
-   public async updateById(userId: string, dto: IUser): Promise<IUser> {
-      return await userRepository.updateById(userId, dto);
+   public async updateMe(userId: string, dto: IUser): Promise<IUser> {
+      const updateUser = await userRepository.updateMe(userId, dto);
+      console.log(updateUser)
+      return updateUser
+   }
+
+   public async deleteMe(jwtPayload: ITokenPayload): Promise<void> {
+      await userRepository.delete(jwtPayload.userId);
    }
 }
 

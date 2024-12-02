@@ -24,12 +24,24 @@ class UserController {
       }
    }
 
-   public async updateById(req: Request, res: Response, next: NextFunction) {
+   public async updateMe(req: Request, res: Response, next: NextFunction) {
       try {
          const userId = req.params.userId;
          const dto = req.body as IUser;
-         const userUpdate = await userService.updateById(userId, dto);
+         const userUpdate = await userService.updateMe(userId, dto);
          res.status(201).json(userUpdate);
+      } catch (e) {
+         next(e);
+      }
+   }
+
+   public async deleteMe(req: Request, res: Response, next: NextFunction) {
+      try {
+         const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+   
+         await userService.deleteMe(jwtPayload)
+
+         res.sendStatus(204);
       } catch (e) {
          next(e);
       }

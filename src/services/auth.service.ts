@@ -51,7 +51,7 @@ class AuthService {
       return tokens;
    }
 
-   public async logout(jwtPayload: ITokenPayload, tokenId: string): Promise<void> {
+   public async logout(tokenId: string): Promise<void> {
       await tokenRepository.deleteOneByParams({_id: tokenId});
    }
 

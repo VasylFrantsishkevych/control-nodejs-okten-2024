@@ -30,7 +30,7 @@ class UserRepository {
       return await User.findOne({role});
    }
 
-   public async updateById(userId: string, dto: Partial<IUser>): Promise<IUser> {
+   public async updateMe(userId: string, dto: Partial<IUser>): Promise<IUser> {
       return await User.findByIdAndUpdate(userId, dto, {new: true});
    }
 
