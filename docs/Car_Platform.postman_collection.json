@@ -154,7 +154,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"userName\": \"buyer\",\r\n    \"email\": \"buyer@gmail.com\",\r\n    \"password\": \"seller\",\r\n    \"phone\": \"+380-97-245-21-12\",\r\n    \"role\": \"buyer\"\r\n}",
+							"raw": "{\r\n    \"userName\": \"buyer\",\r\n    \"email\": \"buyer@gmail.com\",\r\n    \"password\": \"buyer\",\r\n    \"phone\": \"+380-97-245-21-12\",\r\n    \"role\": \"buyer\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -774,6 +774,35 @@
 							"path": [
 								"manager",
 								"not-valid-cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteBlockUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/manager/block-user/{{userId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"manager",
+								"block-user",
+								"{{userId}}"
 							]
 						}
 					},

@@ -50,6 +50,16 @@ class ManagerController {
       }
    }
 
+   public async deleteBlockUser(req: Request, res: Response, next: NextFunction) {
+      try {
+         const {userId} = req.params;
+         await managerService.deleteBlockUser(userId);
+         res.sendStatus(204);
+      } catch (e) {
+         next(e)
+      }
+   }
+
    public async deleteNotValidCar(req: Request, res: Response, next: NextFunction) {
       try {
          const {carId} = req.params;

@@ -44,6 +44,14 @@ router.put('/unblock-user/:userId',
    managerController.unblockUser
 );
 
+router.delete('/block-user/:userId', 
+   commonMiddleware.checkIsIdvalid('userId'),
+   authMiddleware.checkAccessToken,
+   userMiddleware.checkIsAllowRoles([RoleEnum.MANAGER]), 
+   userMiddleware.checkIsUserExist,
+   managerController.deleteBlockUser
+);
+
 router.delete('/delete-not-valid-car/:carId', 
    commonMiddleware.checkIsIdvalid('carId'),
    authMiddleware.checkAccessToken,

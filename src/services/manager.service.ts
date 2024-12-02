@@ -27,6 +27,10 @@ class ManagerService {
       return await user.save();
    }
 
+   public async deleteBlockUser(userId: string): Promise<void> {
+      await userRepository.delete(userId);
+   }
+
    public async deleteNotValidCar(carId: string): Promise<void> {
       await carRepository.deleteById(carId);
    }
